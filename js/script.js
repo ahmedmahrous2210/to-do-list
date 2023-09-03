@@ -1,4 +1,5 @@
 const itemsArray = localStorage.getItem('items') ? JSON.parse(localStorage.getItem('items')) : [];
+const flagsArray = localStorage.getItem('flags') ? JSON.parse(localStorage.getItem('flags')) : [];
 
 document.querySelector("#enter").addEventListener("click", () => {
   const item = document.querySelector("#item")
@@ -25,6 +26,8 @@ function displayDate(){
 }
 
 function displayItems(){
+  const updateController = document.querySelectorAll(".update-controller")
+  const inputs = document.querySelectorAll(".input-controller textarea")
   let items = ""
   for(let i = 0; i < itemsArray.length; i++){
     items += `<div class="item">
@@ -41,8 +44,20 @@ function displayItems(){
                   <button class="cancelBtn">Cancel</button>
                 </div>
               </div>`
+
+
+            
+
   }
+  // for()
   document.querySelector(".to-do-list").innerHTML = items
+  for(let i = 0; i < itemsArray.length; i++){
+  if(flagsArray[i] === "1")
+  
+  activateCheckListeners_LTflags(i,"1")
+else
+activateCheckListeners_LTflags(i,"0")
+  }
  
   activateCheckListeners_LT()
   activateDeleteListeners()
@@ -51,7 +66,19 @@ function displayItems(){
   activateCancelListeners()
 }
 
+function activateCheckListeners_LTflags(index,flag){
 
+  const updateController = document.querySelectorAll(".update-controller")
+  const inputs = document.querySelectorAll(".input-controller textarea")
+  inputs[index].disabled = false 
+  if(flag ==="1")
+  inputs[index].style.textDecoration = 'line-through'
+else
+  inputs[index].style.textDecoration = "none"
+
+	inputs[index].disabled = true
+ 
+}
 function activateCheckListeners_LT(){
   let checkBtn = document.querySelectorAll(".checkBtn")
   const updateController = document.querySelectorAll(".update-controller")
@@ -61,9 +88,21 @@ function activateCheckListeners_LT(){
     kB.addEventListener("click", () => {   
 	inputs[i].disabled = false 
 	if(inputs[i].style.textDecoration === 'line-through')
+  {
 		inputs[i].style.textDecoration = "none"
+
+    flagsArray[i]="0"
+    localStorage.setItem('flags', JSON.stringify(flagsArray))
+    // location.reload()
+  }
 	else
+  {
 		inputs[i].style.textDecoration = 'line-through'
+
+    flagsArray[i]="1"
+    localStorage.setItem('flags', JSON.stringify(flagsArray))
+    // location.reload()
+  }
 	inputs[i].disabled = true
   })  
   })
@@ -112,13 +151,17 @@ function activateCancelListeners(){
 
 function createItem(item){
   itemsArray.push(item.value)
+  flagsArray.push("0")
   localStorage.setItem('items', JSON.stringify(itemsArray))
+  localStorage.setItem('flags', JSON.stringify(flagsArray))
   location.reload()
 }
 
 function deleteItem(i){
   itemsArray.splice(i,1)
+  flagsArray.splice(i,1)
   localStorage.setItem('items', JSON.stringify(itemsArray))
+  localStorage.setItem('flags', JSON.stringify(flagsArray))
   location.reload()
 }
 
